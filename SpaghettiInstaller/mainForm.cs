@@ -237,8 +237,20 @@ namespace SpaghettiInstaller
         private void steamCheck()
         {
             var ret2 = 0;
-            var ret = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Valve\Steam", "SteamPath", string.Empty).ToString();
-            int.TryParse(Registry.GetValue(@"HKEY_CURRENT_USER\Software\Valve\Steam\Apps\391540", "Installed", 0).ToString(), out ret2);
+            var ret = string.Empty;
+            var result = false;
+            try
+            {
+                ret = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Valve\Steam", "SteamPath", string.Empty).ToString();
+                result = int.TryParse(Registry.GetValue(@"HKEY_CURRENT_USER\Software\Valve\Steam\Apps\391540", "Installed", 0).ToString(), out ret2);
+                if (!result) throw new Exception("error when parsing stuff.");
+            }
+            catch
+            {
+                haveSteam = false;
+                return;
+            }
+            
             if (ret == string.Empty)
             {
                 haveSteam = false; // nope, no Steam in the first place.
